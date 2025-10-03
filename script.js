@@ -67,6 +67,7 @@ async function data(sku) {
 btn_buscar.addEventListener('click', () => {
     card.innerHTML='';
     let sku = input_sku.value;
+    sku = sku.toUpperCase();
     if(sku == ''){
         let p = document.createElement('p');
         p.textContent = 'Sku vacio'
