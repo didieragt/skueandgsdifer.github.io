@@ -1,5 +1,7 @@
 let input_sku = document.getElementById('sku');
+let input_ean = document.getElementById('ean');
 let btn_buscar = document.getElementById('btn-buscar');
+let btn_buscar_ean = document.getElementById('btn-buscar-ean');
 let arrTallas = [];
 let card = document.querySelector('.card');
 let url_Img = 'https://www.pre.desigual.com/dw/image/v2/BCVV_PRD/on/demandware.static/-/Sites-desigual-m-catalog/default/dw97ce96ee/images/B2C/';
@@ -14,10 +16,11 @@ async function data(sku) {
         }
 
         const data = await response.json();
-        const productoEncontrado = data.filter(item => item.Sku === sku)
-
+        const productoEncontrado = isNaN(sku)
+                ? data.filter(item => item.Sku === sku)
+                : data.filter(item => item.EAN === Number(sku));
         if(productoEncontrado){
-            let concaUrl = sku.slice(0,8)+'_'+sku.slice(8,12)+'_X.jpg';
+            let concaUrl = productoEncontrado[0].Sku.slice(0,8)+'_'+productoEncontrado[0].Sku.slice(8,12)+'_X.jpg';
             let img = document.createElement('img');
             img.setAttribute('src', url_Img+concaUrl);
             let label_Sku = document.createElement('h2');
@@ -80,4 +83,22 @@ btn_buscar.addEventListener('click', () => {
             data(sku);
         }
     input_sku.value='';
+});
+
+btn_buscar_ean.addEventListener('click', () => {
+    card.innerHTML='';
+    let ean = input_ean.value;
+    ean = ean.toUpperCase();
+    if(ean == ''){
+        let p = document.createElement('p');
+        p.textContent = 'Ean vacio'
+        card.appendChild(p);
+    } else if(ean.length < 13 || ean.length > 13){
+        let p = document.createElement('p');
+        p.textContent = 'Ean no Valido'
+        card.appendChild(p);
+    } else{
+            data(ean);
+        }
+    input_ean.value='';
 });
